@@ -33,13 +33,17 @@ async def start():
 @cl.on_message
 async def main(message: cl.Message):
     rag_system = cl.user_session.get("rag_system") # type: RAGSystem
-
+    
     if rag_system is None:
         await cl.Message(content="RAG system not initialized. Please wait or restart the chat.").send()
         return
-
-    response = rag_system.query_langgraph(message.content)
-
-    await cl.Message(
-        content=response,
-    ).send()
+    
+    msg = cl.Message(content="")
+    await msg.send()
+    
+    stream_generator = rag_system.query_langgraph(message.content)
+    
+    for token in stream_generator:
+        await msg.stream_token(token)
+    
+    await msg.send()

@@ -1,5 +1,5 @@
 import os
-
+from typing import Iterator
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_community.document_loaders.base import BaseLoader
@@ -150,21 +150,23 @@ class RAGSystem:
         return {"answer": response}
 
 
-    def query_rag_chain(self, question: str) -> str:
+    def query_langgraph(self, question: str) -> Iterator[str]:
         """
         Queries the RAG system using the LangChain expression language chain.
         """
-        print(f"Querying LangChain RAG chain with question: '{question}'")
-        return self.llm_chain.invoke(question)
-
-
-    def query_langgraph(self, question: str) -> str:
-        """
-        Queries the RAG system using the LangGraph.
-        """
-        print(f"Querying LangGraph with question: '{question}'")
-        result = self.graph.invoke({"question": question})
-        return result["answer"]
+        print(f"Querying LangGraph with question: '{question}' for streaming...")
+        
+        full_answer = ""
+        for state_update in self.graph.stream({"question": question}):
+            if "generate" in state_update:
+                chunk = state_update["generate"]["answer"]
+                # print("=*"*50)
+                # print(chunk)
+                # print("=*"*50)
+                full_answer += chunk
+                yield chunk
+        
+        print("Finished streaming from LangGraph.")
 
 
 if __name__ == "__main__":
@@ -182,8 +184,8 @@ if __name__ == "__main__":
         )
 
         print("\n--- Testing LangGraph ---")
-        answer_lg = rag_system.query_langgraph("Deposit not received?")
-        print(f"Answer (LangGraph): {answer_lg}")
+        answer = rag_system.query_langgraph("Deposit not received?")
+        print(f"Answer (LangGraph): {answer}")
 
         # Clean up ChromaDB if needed for fresh start (uncomment if desired)
         # import shutil

@@ -102,6 +102,8 @@ Make sure your virtual environment is active (see step 2), then navigate to your
 
 ```bash
 chainlit run src/chainlit_app.py -w
+# or
+PYTHONPATH=$PYTHONPATH:. chainlit run src/chainlit_app.py -w
 ```
 
 #### 5. Access the UI

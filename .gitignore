@@ -21,3 +21,4 @@ venv
 vector_stores/*
 
 .chainlit/
+chainlit.md

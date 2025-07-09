@@ -40,7 +40,8 @@ class ExcelLoader(BaseLoader):
 
         for sheet_name, df in excel_data.items():
             # Ensure 'question' and 'answer' columns exist
-            if 'question' not in df.columns or 'answer' not in df.columns:
+            if ('question' not in df.columns 
+                or 'answer' not in df.columns):
                 print(f"Warning: Sheet '{sheet_name}' in '{self.file_path}' "
                     f"does not contain 'question' or 'answer' columns. Skipping.")
                 continue

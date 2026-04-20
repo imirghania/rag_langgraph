@@ -1,8 +1,9 @@
-import pandas as pd
+import pandas as pd    # type: ignore
 from langchain_core.documents import Document
 from langchain_community.document_loaders.base import BaseLoader
 from typing import List
 import os
+
 
 class ExcelLoader(BaseLoader):
     """
@@ -33,17 +34,18 @@ class ExcelLoader(BaseLoader):
             # Read all sheets from the Excel file into a dictionary of DataFrames
             # sheet_name=None will return a dictionary where keys are sheet names
             # and values are the corresponding DataFrames.
+            print("[Document Loader] Loading documents from Excel using ExcelLoader...")
             excel_data = pd.read_excel(self.file_path, sheet_name=None)
         except Exception as e:
-            print(f"Error reading Excel file {self.file_path}: {e}")
+            print(f"[Document Loader] Error reading Excel file {self.file_path}: {e} ❌")
             return []
 
         for sheet_name, df in excel_data.items():
             # Ensure 'question' and 'answer' columns exist
             if ('question' not in df.columns 
                 or 'answer' not in df.columns):
-                print(f"Warning: Sheet '{sheet_name}' in '{self.file_path}' "
-                    f"does not contain 'question' or 'answer' columns. Skipping.")
+                print(f"[Document Loader] Warning: Sheet '{sheet_name}' in '{self.file_path}' "
+                    f"does not contain 'question' or 'answer' columns. Skipping. 💡")
                 continue
 
             for index, row in df.iterrows():
@@ -62,7 +64,7 @@ class ExcelLoader(BaseLoader):
                 doc = Document(page_content=content, metadata=metadata)
                 all_documents.append(doc)
 
-        print(f"Successfully loaded {len(all_documents)} documents from {self.file_path}")
+        print(f"[Document Loader] Successfully loaded {len(all_documents)} documents from {self.file_path}. ✅")
         return all_documents
 
 

@@ -22,3 +22,6 @@ vector_stores/*
 
 .chainlit/
 chainlit.md
+
+CLAUDE.md
+.claude/

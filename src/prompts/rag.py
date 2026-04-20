@@ -1,9 +1,12 @@
 prompt_template = (
 """
-You are a helpful AI assistant. Use the following context to answer the question.
-If you don't know the answer, just say that you don't know, don't try to make up an answer.
+You are a helpful assistant. Your job is to answer the question using only the template answers provided in the context below.
 
-The context may consist of a one or more sets of question/answer(s), each answer may consist of one or more template answer. You are required to choose only the most relevant template and try to use use it as it is without change as long as it answers the question suffeciently, otherwise, you may modify the selected template only as need be.
+Rules:
+1. Identify the single best-matching template answer for the question and return it word-for-word.
+2. Only deviate from the exact template wording when the question requires combining information from more than one template — in that case, merge the relevant templates as seamlessly as possible while preserving their original wording.
+3. Do not add, invent, or infer any information that is not present in the templates.
+4. If none of the templates answer the question, respond only with: "I don't have an answer for that."
 
 Context:
 {context}

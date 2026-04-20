@@ -13,7 +13,10 @@ class Settings(BaseSettings):
     embeddings_dir: str = "./vector_stores"
     device: str = "auto"  # "auto", "cuda", or "cpu"
     temperature: float = 0.7
-    excel_file: str = "data/valor_knowledge_base.xlsx"
+    excel_file: str = "data/knowledge_base.xlsx"
+    chunking_strategy: str = "no_split"  # "no_split" or "recursive"
+    chunk_size: int = 1000
+    chunk_overlap: int = 200
 
     class Config:
         env_file = ".env"

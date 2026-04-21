@@ -1,6 +1,6 @@
-prompt_template = (
-"""
-You are a helpful assistant. Your job is to answer the question using only the template answers provided in the context below.
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+
+_system_prompt = """You are a helpful assistant. Your job is to answer the question using only the template answers provided in the context below.
 
 Rules:
 1. Identify the single best-matching template answer for the question and return it word-for-word.
@@ -9,10 +9,10 @@ Rules:
 4. If none of the templates answer the question, respond only with: "I don't have an answer for that."
 
 Context:
-{context}
+{context}"""
 
-Question: {question}
-
-Answer:
-"""
-)
+chat_prompt = ChatPromptTemplate.from_messages([
+    ("system", _system_prompt),
+    MessagesPlaceholder("history", optional=True),
+    ("human", "{question}"),
+])

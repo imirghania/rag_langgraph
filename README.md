@@ -21,7 +21,11 @@ A fully local Retrieval-Augmented Generation (RAG) system. All inference runs on
 - **Ollama** — install from [ollama.com](https://ollama.com), then pull a model:
 
 ```bash
-ollama pull deepseek-r1:1.5b
+# example
+ollama run deepseek-r1:7b
+
+# recommended
+ollama run hf.co/ggml-org/Qwen3-4B-GGUF:Q4_K_M
 ```
 
 ---

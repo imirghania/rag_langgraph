@@ -91,9 +91,12 @@ class RAGGraph:
     def _generate_answer(self, state: AgentState):
         question = state["question"]
         documents = state["documents"]
+        history = state.get("history", [])
         context = "\n\n".join([doc.page_content for doc in documents])
 
-        response = self.llm_chain.invoke({"context": context, "question": question})
+        response = self.llm_chain.invoke(
+            {"context": context, "question": question, "history": history}
+        )
 
         if response.startswith("<think>"):
             response = trim_think_with_regex(response)
@@ -102,7 +105,7 @@ class RAGGraph:
         return {"answer": response}
 
 
-    def query(self, question: str) -> Iterator[str]:
+    def query(self, question: str, history: list | None = None) -> Iterator[str]:
         """Stream answer tokens for the given question."""
         print(f"[QUERY] Streaming answer for: '{question}'")
 
@@ -115,7 +118,9 @@ class RAGGraph:
         buffer = ""
         think_done = False
 
-        for chunk in self.llm_chain.stream({"context": context, "question": question}):
+        for chunk in self.llm_chain.stream(
+            {"context": context, "question": question, "history": history or []}
+        ):
             if think_done:
                 yield chunk
             else:

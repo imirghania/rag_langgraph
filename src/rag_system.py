@@ -1,9 +1,8 @@
-from typing import Iterator
+from typing import Iterator, List
 
 from langchain_community.document_loaders.base import BaseLoader
+from langchain_core.messages import BaseMessage
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough
 
 from components.data_loader import ExcelLoader  # type: ignore  # noqa: F401 (re-exported for callers)
 from components.embedding_model import get_embedding_model  # type: ignore
@@ -12,7 +11,7 @@ from components.reranker import initialize_reranker  # type: ignore
 from components.vector_store import initialize_vector_store  # type: ignore
 from config.settings import settings  # type: ignore
 from graph.graph import RAGGraph  # type: ignore
-from prompts.rag import prompt_template  # type: ignore
+from prompts.rag import chat_prompt  # type: ignore
 
 
 class RAGSystem:
@@ -37,13 +36,7 @@ class RAGSystem:
         colbert_model, colbert_tokenizer = initialize_reranker()
         print("[INITIALIZATION] ColBERT initialized. ✅")
 
-        prompt = ChatPromptTemplate.from_template(prompt_template)
-        llm_chain = (
-            {"context": RunnablePassthrough(), "question": RunnablePassthrough()}
-            | prompt
-            | llm
-            | StrOutputParser()
-        )
+        llm_chain = chat_prompt | llm | StrOutputParser()
 
         self.rag_graph = RAGGraph(
             colbert_tokenizer=colbert_tokenizer,
@@ -54,5 +47,7 @@ class RAGSystem:
         )
         self.rag_graph.setup()
 
-    def query_langgraph(self, question: str) -> Iterator[str]:
-        return self.rag_graph.query(question)
+    def query_langgraph(
+        self, question: str, history: List[BaseMessage] | None = None
+    ) -> Iterator[str]:
+        return self.rag_graph.query(question, history)

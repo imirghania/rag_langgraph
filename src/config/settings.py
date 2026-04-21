@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     chunking_strategy: str = "no_split"  # "no_split" or "recursive"
     chunk_size: int = 1000
     chunk_overlap: int = 200
+    max_history_turns: int = 10  # number of (human, ai) pairs kept per session
 
     class Config:
         env_file = ".env"
